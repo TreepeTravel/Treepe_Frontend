@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Card from "./cards/Card";
+import { GlobalContext } from "@/context";
+import { useSearchParams } from "next/navigation";
 
 export default function UserProfile() {
   const cards = [
@@ -16,6 +18,7 @@ export default function UserProfile() {
       duration: "10",
       place: "India, Delhi",
       likedByUser: true, // Indicates if the card is liked by the user
+      isDraft: false,
     },
     {
       imgSrc:
@@ -28,6 +31,7 @@ export default function UserProfile() {
       duration: "10",
       place: "India, Delhi",
       likedByUser: false,
+      isDraft: true,
     },
     {
       imgSrc:
@@ -40,6 +44,7 @@ export default function UserProfile() {
       duration: "10",
       place: "India, Delhi",
       likedByUser: true,
+      isDraft: false,
     },
     {
       imgSrc:
@@ -52,11 +57,36 @@ export default function UserProfile() {
       duration: "10",
       place: "India, Delhi",
       likedByUser: false,
+      isDraft: true,
     },
   ];
 
-  const [activeTab, setActiveTab] = useState("myItineraries");
+  // const cards = [];
+
+  const searchParams = useSearchParams();
+  const itineraryType = searchParams.get("itinerary"); // Get the 'cardId' query parameter
+
+  const [activeTab, setActiveTab] = useState(
+    itineraryType == "liked_itinerary"
+      ? "likedItineraries"
+      : itineraryType == "my_itinerary"
+      ? "myItineraries"
+      : "myItineraries"
+  );
+
+  useEffect(() => {
+    setActiveTab(
+      itineraryType == "liked_itinerary"
+        ? "likedItineraries"
+        : itineraryType == "my_itinerary"
+        ? "myItineraries"
+        : "myItineraries"
+    );
+  }, [itineraryType]);
+
   const [isEdit, setisEdit] = useState(false);
+
+  const { isDraft, setisDraft } = useContext(GlobalContext);
 
   const handleEdit = () => {
     // setisEdit(!isEdit);
@@ -66,6 +96,8 @@ export default function UserProfile() {
   const filteredCards =
     activeTab === "likedItineraries"
       ? cards.filter((card) => card.likedByUser)
+      : activeTab === "draft"
+      ? cards.filter((card) => card.isDraft)
       : cards;
 
   return (
@@ -127,20 +159,26 @@ export default function UserProfile() {
           <ul className="flex border-b">
             <li className="mr-4">
               <button
-                onClick={() => setActiveTab("myItineraries")}
+                onClick={() => {
+                  setActiveTab("myItineraries");
+                  setisDraft(false);
+                }}
                 className={`px-4 py-2 font-bold ${
                   activeTab === "myItineraries"
                     ? "text-green-500 border-b-2 border-green-500"
                     : "text-gray-500 hover:text-green-500"
                 }`}
               >
-                My Itineraries
+                My Itinerary
               </button>
             </li>
             <li>
               <button
-                onClick={() => setActiveTab("likedItineraries")}
-                className={`px-4 py-2 ${
+                onClick={() => {
+                  setActiveTab("likedItineraries");
+                  setisDraft(false);
+                }}
+                className={`px-4 mr-4 py-2 ${
                   activeTab === "likedItineraries"
                     ? "font-bold text-green-500 border-b-2 border-green-500"
                     : "text-gray-500 hover:text-green-500"
@@ -149,15 +187,51 @@ export default function UserProfile() {
                 Liked Itineraries
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => {
+                  setActiveTab("draft");
+                  setisDraft(true);
+                }}
+                className={`px-4  py-2 ${
+                  activeTab === "draft"
+                    ? "font-bold text-green-500 border-b-2 border-green-500"
+                    : "text-gray-500 hover:text-green-500"
+                }`}
+              >
+                Draft
+              </button>
+            </li>
           </ul>
         </div>
 
         {/* Itinerary Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {filteredCards.map((card, index) => (
-            <Card key={index} index={index} card={card} />
-          ))}
-        </div>
+        {filteredCards.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {filteredCards.map((card, index) => (
+              <Card key={index} index={index} card={card} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-16 w-full mb-10 mt-16 items-center justify-center">
+            <img src="/image.png" alt="draft Image" className="w-96" />
+            <button
+              onClick={() => router.push("/create-itinerary")}
+              className="mr-4 rounded-full  flex gap-1 bg-green-600 px-4 py-2.5 text-sm font-semibold tracking-wider text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="#FFFFFF"
+              >
+                <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+              </svg>
+              <span className="hidden sm:inline"> Create Itinerary</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

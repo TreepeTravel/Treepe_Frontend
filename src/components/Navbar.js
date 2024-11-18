@@ -16,10 +16,10 @@ const Navbar = () => {
 
   const { login, setlogin } = useContext(GlobalContext);
 
-  const handleViewProfile=()=>{
+  const handleViewProfile = () => {
     setIsDropdownOpen(false);
-    router.push('/account')
-  }
+    router.push("/account");
+  };
 
   // Toggle dropdown visibility
   const toggleDropdown = () => {
@@ -49,6 +49,11 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false); // Close dropdown
+      }
+    }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -154,7 +159,10 @@ const Navbar = () => {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute right-0  px-1 z-10 mt-2 w-52  origin-top-right rounded-2xl bg-slate-50 py-4 shadow-lg ring-1 ring-black ring-opacity-5">
+                  <div
+                    ref={dropdownRef} // Attach the ref to the dropdown element
+                    className="absolute right-0  px-1 z-10 mt-2 w-52  origin-top-right rounded-2xl bg-slate-50 py-4 shadow-lg ring-1 ring-black ring-opacity-5"
+                  >
                     {/* Dropdown menu items */}
                     <div className="flex border-b-2 py-3 w-full gap-5  border-gray-400 bg-white items-center justify-center">
                       <img
@@ -166,26 +174,35 @@ const Navbar = () => {
                         <span className="text-lg text-black font-bold">
                           Souptik Das
                         </span>
-                        <button onClick={()=>{handleViewProfile()}} className="text-xs w-full text-start font-semibold text-green-500">
+                        <button
+                          onClick={() => {
+                            handleViewProfile();
+                          }}
+                          className="text-xs w-full text-start font-semibold text-green-500"
+                        >
                           View Profile
                         </button>
                       </div>
                     </div>
                     <div className="flex gap-1 mt-1 flex-col justify-center">
                       <button
-                        onClick={() => router.push("/under_development")}
+                        onClick={() =>
+                          router.push("/account?itinerary=my_itinerary")
+                        }
                         className="block w-full text-left font-medium border-b-2 border-gray-400 px-4 py-2 text-sm text-gray-700"
                       >
                         My itineraries
                       </button>
                       <button
-                        onClick={() => router.push("/under_development")}
+                        onClick={() =>
+                          router.push("/account?itinerary=liked_itinerary")
+                        }
                         className="block w-full font-medium text-left border-b-2 border-gray-400 px-4 py-2 text-sm text-gray-700"
                       >
                         Liked itineraries
                       </button>
                       <button
-                        onClick={() => router.push("/under_development")}
+                        onClick={() => router.push("/earning")}
                         className="block w-full font-medium text-left border-b-2 border-gray-400 px-4 py-2 text-sm text-gray-700"
                       >
                         My Earnings

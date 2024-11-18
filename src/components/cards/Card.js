@@ -1,11 +1,14 @@
 "use client";
 
+import { GlobalContext } from "@/context";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 export default function Card({ index, card }) {
   const [isLike, setIsLike] = useState(false);
   const router = useRouter();
+
+  const { isDraft, setisDraft } = useContext(GlobalContext);
 
   const handleCardClick = () => {
     router.push(`/itinerary/cardpage?cardId=${index}`); // Navigate to card page with the card's ID or info
@@ -59,7 +62,7 @@ export default function Card({ index, card }) {
             >
               {card.likes}
               {isLike ? (
-                <img src="/image.png" alt="liked" className="w-5 h-5" />
+                <img src="/like.png" alt="liked" className="w-5 h-5" />
               ) : (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -74,17 +77,27 @@ export default function Card({ index, card }) {
             </button>
           </div>
         </div>
-        <div className="flex items-center justify-between sm:flex-row sm:space-x-4 border-t pt-2 border-gray-300 mt-3 text-xs text-gray-500">
-          <span className="font-bold text-lg text-green-600">{card.price}</span>
-          <span>
-            <span className="font-bold text-xl">{card.duration}</span> days
-            Itinerary
-          </span>
-          <span className="flex flex-col">
-            <span className="font-bold text-sm capitalize">{card.place}</span>{" "}
-            Starting Point
-          </span>
-        </div>
+        {isDraft === true ? (
+          <div className="flex items-center justify-center sm:flex-row sm:space-x-4 border-t pt-2 border-gray-300 mt-3 text-xs text-gray-500">
+            <button className="mr-4 rounded-full  flex gap-1 bg-green-600 px-4 py-2.5 text-sm font-semibold tracking-wider text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+              Continue Editing
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between sm:flex-row sm:space-x-4 border-t pt-2 border-gray-300 mt-3 text-xs text-gray-500">
+            <span className="font-bold text-lg text-green-600">
+              {card.price}
+            </span>
+            <span>
+              <span className="font-bold text-xl">{card.duration}</span> days
+              Itinerary
+            </span>
+            <span className="flex flex-col">
+              <span className="font-bold text-sm capitalize">{card.place}</span>{" "}
+              Starting Point
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
