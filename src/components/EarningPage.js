@@ -57,7 +57,7 @@ export default function EarningPage() {
 
         <div>
           {/* Statistics section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 mt-10 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
             {/* Total Views */}
             <StatCard title="Total Views" value="0" />
             {/* Total Ads Viewed */}
@@ -100,7 +100,7 @@ export default function EarningPage() {
           <div className="text-center p-5">
             <button
               disabled
-              className="bg-gray-300 border border-gray-500 text-gray-600 px-6 py-2 rounded-lg cursor-not-allowed focus:outline-none"
+              className="bg-gray-300  text-gray-600 px-6 py-2 rounded-lg cursor-not-allowed focus:outline-none"
             >
               Apply Now
             </button>
@@ -114,9 +114,9 @@ export default function EarningPage() {
 // Reusable StatCard Component
 function StatCard({ title, value }) {
   return (
-    <div className="bg-gray-50 p-6 rounded-lg shadow-sm text-center">
-      <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-2xl font-bold text-gray-800">{value}</p>
+    <div className="bg-gray-50 border-2 border-gray-3 flex px-6 py-5 gap-4 items-start justify-start flex-col  rounded-xl shadow-sm text-center">
+      <p className="text-lg text-gray-800 font-semibold">{title}</p>
+      <p className="text-3xl  font-bold text-gray-800">{value}</p>
     </div>
   );
 }

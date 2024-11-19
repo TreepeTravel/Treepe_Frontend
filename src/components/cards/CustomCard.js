@@ -59,7 +59,7 @@ const cards = [
   },
 ];
 
-function CustomCard({ bigTitle , style }) {
+function CustomCard({ bigTitle, style, greenHeading }) {
   const [isHovered, setIsHovered] = useState(false);
   const scrollRef = useRef(null);
 
@@ -71,7 +71,16 @@ function CustomCard({ bigTitle , style }) {
   };
 
   return (
-    <div className={`flex flex-col items-start justify-start min-h-screen  bg-gray-100 p-4 ${style ? "" : 'mt-10 py-20'} `}>
+    <div
+      className={`flex flex-col items-start justify-start min-h-screen   bg-gray-100 p-4 ${
+        style ? "" : " py-10"
+      } `}
+    >
+      {greenHeading ? (
+        <h1 className="text-left uppercase text-lg mb-5 text-green-600 font-semibold tracking-widest">
+          {greenHeading}
+        </h1>
+      ) : null}
       <h1 className="text-2xl sm:text-3xl lg:text-4xl ml-5 font-bold mb-10">
         {bigTitle}
       </h1>

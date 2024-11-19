@@ -1,37 +1,61 @@
 import { useState } from "react";
+import Card from "./cards/Card";
+import CustomCard from "./cards/CustomCard";
 
 const LandingPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const cards = [
     {
-      title: "Kolkata, India",
-      description: "₹4000  7 Days Tour",
-      image:
-        "https://lh5.googleusercontent.com/p/AF1QipMHvkB151icA3Pa0YFWpakcpCv_LplFa1gorz6j=w675-h390-n-k-no",
+      imgSrc:
+        "https://images.unsplash.com/photo-1594477778796-48c808b4c443?q=80&w=1776&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: "Falling in love with the streets and snow",
+      para1: "Netherlands, Amsterdam.",
+      para2: "By Souptik Das",
+      likes: 235,
+      price: "₹5000",
+      duration: "10",
+      place: "India, Delhi",
+      likedByUser: true, // Indicates if the card is liked by the user
+      isDraft: false,
     },
     {
-      title: "Kolkata, India",
-      description: "₹4000  7 Days Tour",
-      image:
-        "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcTRh613zlRTVvLDY7tqJY7yKTE2PKq9et70kn3Jo6cbgQwYRvvKFnXknQ9x_Iw13UWfKjX2LdvC-xCInmht4Q3be9ZZD_HTCpLMv4QVxQ",
+      imgSrc:
+        "https://lh5.googleusercontent.com/p/AF1QipPEtxCvsxVn7zW01vooJK9G4NhMwPeG5pwZk6Id=w675-h390-n-k-no",
+      title: "Falling in love with the streets and snow",
+      para1: "Netherlands, Amsterdam.",
+      para2: "By Souptik Das",
+      likes: 235,
+      price: "₹5000",
+      duration: "10",
+      place: "India, Delhi",
+      likedByUser: false,
+      isDraft: true,
     },
     {
-      title: "Kolkata, India",
-      description: "₹4000  7 Days Tour",
-      image:
-        "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcTjJnIYB7CK2B8e-bW_iPju30_JSej1TQ3xewcWjnuvUaYrOIrix5AQiJe7CiHuCWG4Z8_xf8xEEW6UDffJ556WgQGGXpLgI7IUJU-ETg",
+      imgSrc:
+        "https://images.unsplash.com/photo-1729103728665-55096459acf1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: "Falling in love with the streets and snow",
+      para1: "Netherlands, Amsterdam.",
+      para2: "By Souptik Das",
+      likes: 235,
+      price: "₹5000",
+      duration: "10",
+      place: "India, Delhi",
+      likedByUser: true,
+      isDraft: false,
     },
     {
-      title: "Kolkata, India",
-      description: "₹4000  7 Days Tour",
-      image:
-        "https://lh5.googleusercontent.com/p/AF1QipPNCfv_JgzRTqfDPkZ4shXR48NPgPbcX2PzDX3V=w675-h390-n-k-no",
-    },
-    {
-      title: "Kolkata, India",
-      description: "₹4000  7 Days Tour",
-      image:
-        "https://lh5.googleusercontent.com/p/AF1QipNxvnTaiIVs-mbJgnLuLqI2LGx8EdWkDpyOQEHu=w675-h390-n-k-no",
+      imgSrc:
+        "https://plus.unsplash.com/premium_photo-1661878122586-2d75a86f3400?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: "Falling in love with the streets and snow",
+      para1: "Netherlands, Amsterdam.",
+      para2: "By Souptik Das",
+      likes: 235,
+      price: "₹5000",
+      duration: "10",
+      place: "India, Delhi",
+      likedByUser: false,
+      isDraft: true,
     },
   ];
 
@@ -52,69 +76,7 @@ const LandingPage = () => {
             Top itineraries
           </p>
 
-          {/* Title with buttons on the right */}
-          <div className="flex items-center  justify-between mt-4">
-            <h1 className="text-4xl flex flex-col font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-5xl">
-              The amazing places around
-              <span>the world</span>
-            </h1>
-            <div className="flex space-x-2">
-              <button
-                onClick={handlePrev}
-                className="p-3 text-white bg-slate-200 rounded-full hover:bg-slate-300 transition duration-200 flex items-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"  
-                  width="24px"
-                  fill="#04b910"
-                >
-                  <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-                </svg>
-              </button>
-              <button
-                onClick={handleNext}
-                className="p-3 text-white bg-slate-200 rounded-full hover:bg-slate-300 transition duration-200 flex items-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"
-                  width="24px"
-                  fill="#04b910"
-                >
-                  <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Cards section */}
-          <div className="mt-10 overflow-hidden">
-            <div
-              className="flex transition-transform duration-500"
-              style={{ transform: `translateX(-${currentIndex * (100 / 4)}%)` }}
-            >
-              {cards.map((card, index) => (
-                <div key={index} className="flex-shrink-0 w-full sm:w-1/4 p-2">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <img
-                      src={card.image}
-                      alt={card.title}
-                      className="w-full h-auto"
-                    />
-                    <div className="p-4">
-                      <h2 className="text-lg font-semibold">{card.title}</h2>
-                      <p className="mt-2 text-gray-600 text-sm">
-                        {card.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CustomCard bigTitle="Explore Nainital" />
         </div>
       </section>
     </div>

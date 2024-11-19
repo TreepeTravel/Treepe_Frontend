@@ -1,8 +1,25 @@
 "use client";
+import SelectInput from "@/components1/SelectInput";
 import LandingPage from "./LandingPage";
 import LandingPage2 from "./LandingPage2";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import CustomCard from "./cards/CustomCard";
 
 function HeroSection() {
+  const router = useRouter();
+
+  const [searchForm, setsearchForm] = useState({
+    location: "Sai Chouck, New Delhi",
+    duration: "",
+  });
+
+  const handleSearch = () => {
+    router.push(
+      `/itinerary?location=${searchForm.location}&duration=${searchForm.duration}`
+    );
+  };
+
   return (
     <>
       {/* First Hero Section */}
@@ -20,77 +37,133 @@ function HeroSection() {
                 </p>
 
                 {/* Special block session */}
-                <div className="flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-6 shadow-lg px-6 py-4 mt-12 bg-slate-50 w-full max-w-lg rounded-3xl mx-auto lg:mx-0">
+                <div className="flex flex-col lg:flex-row  lg:justify-between items-center gap-6 shadow-lg px-6 py-4 mt-12 bg-slate-50 w-full max-w-lg rounded-3xl mx-auto lg:mx-0">
                   {/* First half */}
-                  <div className="flex items-center gap-4 justify-center lg:justify-start">
+                  <div className="flex w-full  items-center gap-3 justify-start lg:justify-start">
                     {/* Location logo */}
                     <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 22 22"
+                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      height="24px"
-                      viewBox="0 -960 960 960"
-                      width="24px"
-                      fill="#04b910"
                     >
-                      <path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
+                      <path
+                        d="M11.0006 12.3108C12.5802 12.3108 13.8606 11.0304 13.8606 9.45082C13.8606 7.87129 12.5802 6.59082 11.0006 6.59082C9.42109 6.59082 8.14062 7.87129 8.14062 9.45082C8.14062 11.0304 9.42109 12.3108 11.0006 12.3108Z"
+                        fill="white"
+                        stroke="#218B00"
+                        strokeWidth="1.5"
+                      />
+                      <path
+                        d="M3.31823 7.78242C5.12406 -0.155913 16.8849 -0.146746 18.6816 7.79159C19.7357 12.4483 16.8391 16.3899 14.2999 18.8283C12.4574 20.6066 9.5424 20.6066 7.69073 18.8283C5.16073 16.3899 2.26406 12.4391 3.31823 7.78242Z"
+                        fill="white"
+                        stroke="#218B00"
+                        strokeWidth="1.5"
+                      />
                     </svg>
+
                     <div className="flex flex-col items-start justify-start">
                       {/* Location representation */}
-                      <span className="text-xs font-medium text-gray-700 items-center justify-start flex">
+                      <span className="text-xs  font-medium text-gray-700 items-center justify-start flex">
                         Location
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24px"
-                          viewBox="0 -960 960 960"
-                          width="24px"
-                          fill="#000000"
-                        >
-                          <path d="M480-360 280-560h400L480-360Z" />
-                        </svg>
                       </span>
-                      <span className="capitalize text-black text-sm font-bold">
-                        Sai Chouck, New Delhi
-                      </span>
+
+                      <input
+                        type="text"
+                        name="location"
+                        id="location"
+                        defaultValue="Sai Chouck, New Delhi"
+                        className="capitalize focus:border-none p-1 focus:ring-0 text-black  text-sm font-bold"
+                      />
                     </div>
                   </div>
 
                   {/* Separator */}
-                  <span className="text-gray-400 hidden lg:block">|</span>
+                  <span className="text-gray-400 hidden  lg:block">|</span>
 
-                  {/* Second half */}
-                  <div className="flex gap-6 items-center justify-center lg:justify-start">
-                    <div className="flex items-center gap-4 justify-between">
+                  <div className="flex justify-between border-t pt-3 lg:pt-0 lg:border-none border-gray-300 w-full  items-center ">
+                    {/* Second half */}
+                    <div className="flex gap-3 items-center justify-center  lg:justify-start">
+                      {/* <div className="flex items-center gap-4 justify-between"> */}
                       {/* Duration logo */}
+
                       <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        fill="#04b910"
                       >
-                        <path d="M200-640h560v-80H200v80Zm0 0v-80 80Zm0 560q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v227q-19-9-39-15t-41-9v-43H200v400h252q7 22 16.5 42T491-80H200Zm520 40q-83 0-141.5-58.5T520-240q0-83 58.5-141.5T720-440q83 0 141.5 58.5T920-240q0 83-58.5 141.5T720-40Zm67-105 28-28-75-75v-112h-40v128l87 87Z" />
+                        <path
+                          d="M11.0007 19.2499C10.9972 18.4451 10.7818 17.6555 10.3763 16.9603C9.97085 16.2652 9.38946 15.6891 8.69065 15.2899C8.96549 14.8756 9.12286 14.3945 9.146 13.8978C9.16915 13.4011 9.0572 12.9075 8.82208 12.4694C8.58696 12.0313 8.23747 11.6651 7.81078 11.4098C7.3841 11.1546 6.89619 11.0198 6.39898 11.0198C5.90178 11.0198 5.41387 11.1546 4.98719 11.4098C4.5605 11.6651 4.211 12.0313 3.97588 12.4694C3.74076 12.9075 3.62882 13.4011 3.65197 13.8978C3.67511 14.3945 3.83248 14.8756 4.10732 15.2899C3.41534 15.6937 2.84129 16.2718 2.44241 16.9666C2.04353 17.6615 1.83375 18.4487 1.83398 19.2499V20.1666H11.0007V19.2499Z"
+                          fill="#218B00"
+                        />
+                        <path
+                          d="M11.0007 1.83325C9.79687 1.83325 8.60487 2.07036 7.49272 2.53103C6.38057 2.99169 5.37004 3.66691 4.51884 4.51811C2.79976 6.23719 1.83398 8.56877 1.83398 10.9999H3.66732C3.66828 9.61137 4.06345 8.25163 4.80687 7.07885C5.55028 5.90607 6.61138 4.96846 7.86675 4.37506C9.12211 3.78166 10.5202 3.55687 11.8983 3.72684C13.2764 3.8968 14.5779 4.45453 15.6515 5.33515C16.7251 6.21578 17.5266 7.38311 17.9628 8.70136C18.3989 10.0196 18.4519 11.4346 18.1155 12.7818C17.7791 14.129 17.0671 15.353 16.0623 16.3114C15.0576 17.2698 13.8014 17.9233 12.4398 18.1958L12.7973 20.0291C15.0785 19.6338 17.1257 18.39 18.5276 16.5475C19.9294 14.705 20.5822 12.4002 20.3547 10.0962C20.1272 7.79226 19.0363 5.65968 17.3011 4.12692C15.566 2.59415 13.3151 1.77473 11.0007 1.83325Z"
+                          fill="#218B00"
+                        />
+                        <path
+                          d="M10.084 5.5V11.3758L13.0998 14.4008L14.4015 13.0992L11.9173 10.6242V5.5H10.084Z"
+                          fill="#218B00"
+                        />
                       </svg>
-                      <div className="flex flex-col items-start justify-start">
-                        {/* Duration representation */}
-                        <span className="text-xs font-medium text-gray-700 items-center justify-start flex">
+
+                      <div className="flex flex-col items-start  justify-start space-y-1">
+                        {/* Label and Dropdown */}
+                        {/* Dropdown */}
+                        <span className="text-xs flex gap-1 font-medium text-gray-700">
                           Duration
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            height="24px"
-                            viewBox="0 -960 960 960"
-                            width="24px"
-                            fill="#000000"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="w-4 h-4"
                           >
-                            <path d="M480-360 280-560h400L480-360Z" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                            />
                           </svg>
                         </span>
-                        <span className="capitalize text-black text-sm font-bold">
-                          3 days
-                        </span>
-                      </div>
-                    </div>
 
-                    {/* Search button */}
-                    <button className="p-2 bg-green-600 text-white hover:bg-green-700 rounded-full transition duration-300">
+                        <div className="flex items-center space-x-1">
+                          <div className="relative">
+                            <select
+                              id="duration-select"
+                              value={searchForm.duration}
+                              onChange={(e) =>
+                                setsearchForm((prevState) => ({
+                                  ...prevState,
+                                  duration: e.target.value, // Update the duration field
+                                }))
+                              }
+                              className="appearance-none w-full bg-white text-sm font-bold text-gray-900  border border-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white cursor-pointer"
+                            >
+                              <option value="" disabled>
+                                Select
+                              </option>
+                              <option value="1D 0N">1 Day 0 Night</option>
+                              <option value="1D 1N">1 Day 1 Night</option>
+                              <option value="2D 0N">2 Day 0 Night</option>
+                              <option value="2D 1N">2 Day 1 Night</option>
+                              <option value="2D 2N">2 Day 2 Night</option>
+                              <option value="3D 0N">3 Day 0 Night</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Search button */}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleSearch();
+                      }}
+                      className="p-2 bg-green-600 text-white hover:bg-green-700 rounded-full transition duration-300"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -190,7 +263,10 @@ function HeroSection() {
       </div>
 
       {/* Additional Sections */}
-      <LandingPage />
+      <CustomCard
+        greenHeading="top iteriraries"
+        bigTitle="The amazing place around the world "
+      />
       <LandingPage2 />
     </>
   );
