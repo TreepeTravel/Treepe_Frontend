@@ -26,7 +26,7 @@ function HeroSection() {
       <div className="">
         <section className="pt-12 sm:pb-16 lg:pt-3">
           <div className="px-4 mx-auto max-w-7xl sm:px-6">
-            <div className="grid grid-cols-1 gap-8 mt-2 items-center w-full justify-between lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8  items-center w-full justify-between lg:grid-cols-2">
               {/* Text Section */}
               <div className="text-center mb-16 lg:text-left">
                 <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl lg:text-5xl leading-tight">
@@ -184,17 +184,17 @@ function HeroSection() {
               </div>
 
               {/* Image Section */}
-              <div className="flex  justify-center h-[80%] relative">
+              <div className="flex justify-center h-[80%] relative">
                 {/* Image 1 */}
                 <img
-                  className=" max-w-md  rounded-t-full rounded-lg object-cover shadow-xl"
+                  className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-t-full rounded-lg object-cover shadow-xl"
                   src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Travel Journey"
                 />
 
                 {/* Image 2 */}
                 <img
-                  className="w-36 h-52 border-8 border-gray-100 rounded-t-full rounded-b-full rounded-lg object-cover absolute right-10 top-3/4 transform -translate-y-1/2"
+                  className="w-24 h-36 sm:w-28 sm:h-36 md:w-32 md:h-44 lg:w-36 lg:h-60 border-4 sm:border-6 md:border-8 border-gray-100 rounded-t-full rounded-b-full rounded-lg object-cover absolute right-3 sm:right-8 md:right-2 top-3/4 sm:top-3/4 transform -translate-y-1/2"
                   src="https://images.pexels.com/photos/2108845/pexels-photo-2108845.jpeg?auto=compress&cs=tinysrgb&w=400"
                   alt="Travel Journey"
                 />
@@ -212,7 +212,7 @@ function HeroSection() {
               <div className="flex justify-start relative">
                 {/* Image 1 */}
                 <img
-                  className="w-full max-w-md h-auto rounded-t-full rounded-b-full rounded-lg object-cover shadow-xl"
+                  className="w-full max-w-80 lg:max-w-md pl-3 h-auto rounded-t-full rounded-b-full rounded-lg object-cover shadow-xl"
                   src="https://plus.unsplash.com/premium_photo-1679916743693-03ea85e16b5c?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="Travel Journey"
                 />
@@ -226,7 +226,7 @@ function HeroSection() {
               </div>
 
               {/* Text Section */}
-              <div className="text-center lg:text-left mt-28 pt-24">
+              <div className="text-center lg:text-left lg:mt-28 pt-24">
                 <h3 className="text-green-600 font-semibold tracking-widest text-sm uppercase">
                   Feature
                 </h3>
