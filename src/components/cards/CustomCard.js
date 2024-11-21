@@ -72,7 +72,7 @@ function CustomCard({ bigTitle, style, greenHeading }) {
 
   return (
     <div
-      className={`flex flex-col items-start justify-start min-h-screen   bg-gray-100 p-4 ${
+      className={`flex flex-col items-start justify-start    bg-gray-100 p-4 ${
         style ? "" : " py-10"
       } `}
     >

@@ -8,17 +8,29 @@ import NavPopup from "./popups/NavPopup";
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Mobile menu visibility
-  const [isNavpopupOpen, setisNavpopupOpen] = useState(false);
 
   const mobileMenuRef = useRef(null);
   const dropdownRef = useRef(null); // Reference for dropdown to detect outside clicks
   const router = useRouter(); // Hook for navigation
 
-  const { login, setlogin } = useContext(GlobalContext);
+  const {
+    login,
+    setlogin,
+    isSignIn,
+    setisSignIn,
+    isNavpopupOpen,
+    setisNavpopupOpen,
+  } = useContext(GlobalContext);
 
   const handleViewProfile = () => {
     setIsDropdownOpen(false);
     router.push("/account");
+  };
+
+  const handleLogout = () => {
+    setlogin(false);
+    setIsDropdownOpen(false);
+    router.push("/");
   };
 
   // Toggle dropdown visibility
@@ -46,6 +58,7 @@ const Navbar = () => {
 
   const handleNavPopup = () => {
     setisNavpopupOpen(!isNavpopupOpen);
+    setisSignIn(true);
   };
 
   useEffect(() => {
@@ -213,7 +226,7 @@ const Navbar = () => {
                         My Earnings
                       </button>
                       <button
-                        onClick={() => router.push("/under_development")}
+                        onClick={() => handleLogout()}
                         className=" gap-1  mt-2 items-center  flex justify-center w-full  px-4 py-2 text-sm font-medium text-red-500"
                       >
                         Logout

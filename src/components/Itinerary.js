@@ -176,13 +176,13 @@ function SelectInput({
 
 function ContentCards() {
   return (
-    <>
+    <div className="flex flex-col my-20 gap-16">
       <CustomCard bigTitle="Explore Nainital" />
       <AdBanner />
       <CustomCard bigTitle="Explore Itineraries" />
       <AdBanner />
       <CustomCard bigTitle="Explore Itineraries" />
       <CustomCard bigTitle="Explore Itineraries" />
-    </>
+    </div>
   );
 }

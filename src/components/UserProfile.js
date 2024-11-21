@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import Card from "./cards/Card";
 import { GlobalContext } from "@/context";
 import { useSearchParams } from "next/navigation";
+import EditPopUp from "./popups/EditPopup";
 
 export default function UserProfile() {
   const cards = [
@@ -89,7 +90,7 @@ export default function UserProfile() {
   const { isDraft, setisDraft } = useContext(GlobalContext);
 
   const handleEdit = () => {
-    // setisEdit(!isEdit);
+    setisEdit(true);
   };
 
   // Filter cards based on the active tab
@@ -111,29 +112,11 @@ export default function UserProfile() {
               alt="User Profile"
               className="w-20 h-20 rounded-full border-2 border-gray-300"
             />
-            {isEdit ? (
-              <form action="" className="text-center sm:text-left">
-                <input
-                  type="text"
-                  name="username"
-                  id="username"
-                  value="Souptik Das"
-                  className="text-2xl font-bold"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value="souptikdas19@gmail.com"
-                  className="text-gray-500"
-                />
-              </form>
-            ) : (
-              <div className="text-center sm:text-left">
-                <h1 className="text-2xl font-bold">Souptik Das</h1>
-                <p className="text-gray-500">souptikdas19@gmail.com</p>
-              </div>
-            )}
+
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl font-bold">Souptik Das</h1>
+              <p className="text-gray-500">souptikdas19@gmail.com</p>
+            </div>
           </div>
           <button
             onClick={() => {
@@ -163,10 +146,10 @@ export default function UserProfile() {
                   setActiveTab("myItineraries");
                   setisDraft(false);
                 }}
-                className={`px-4 py-2 font-bold ${
+                className={`px-4 py-2  ${
                   activeTab === "myItineraries"
-                    ? "text-green-500 border-b-2 border-green-500"
-                    : "text-gray-500 hover:text-green-500"
+                    ? "text-green-500 font-bold border-b-2 border-green-500"
+                    : "text-gray-500 font-medium hover:text-green-500"
                 }`}
               >
                 My Itinerary
@@ -181,7 +164,7 @@ export default function UserProfile() {
                 className={`px-4 mr-4 py-2 ${
                   activeTab === "likedItineraries"
                     ? "font-bold text-green-500 border-b-2 border-green-500"
-                    : "text-gray-500 hover:text-green-500"
+                    : "text-gray-500 font-medium hover:text-green-500"
                 }`}
               >
                 Liked Itineraries
@@ -196,7 +179,7 @@ export default function UserProfile() {
                 className={`px-4  py-2 ${
                   activeTab === "draft"
                     ? "font-bold text-green-500 border-b-2 border-green-500"
-                    : "text-gray-500 hover:text-green-500"
+                    : "text-gray-500 font-medium hover:text-green-500"
                 }`}
               >
                 Draft
@@ -233,6 +216,16 @@ export default function UserProfile() {
           </div>
         )}
       </div>
+      {isEdit && (
+        <EditPopUp
+          email="teteatharva@gmail.com"
+          username="atharva"
+          userImage="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          onClose={() => {
+            setisEdit(false);
+          }}
+        />
+      )}
     </div>
   );
 }
