@@ -44,8 +44,8 @@ export const loginApi = async (credentials) => {
     return data;
   } catch (error) {
     // Log the error and re-throw it for the caller to handle
-    console.error("Login API error:", error);
-    throw new Error(error.message || "Something went wrong while logging in.");
+    console.log("Login API error:", error);
+    // throw new Error(error.message || "Something went wrong while logging in.");
   }
 };
 

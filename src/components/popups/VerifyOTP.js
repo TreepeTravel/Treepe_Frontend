@@ -81,14 +81,14 @@ export default function Verify({ email, onClose }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className="flex flex-col items-center  justify-center py-4">
       {/* Header */}
       <h2 className="text-center text-2xl font-bold text-gray-800">
         Verify Email
       </h2>
-      <p className="flex text-sm mb-6 mt-2 gap-1 text-gray-600 items-center justify-center">
-        Verification mail has been sent to{" "}
-        <span className="font-medium">{email}</span>
+      <p className="flex justify-center w-full mb-4 mt-2 text-sm text-gray-700 gap-2 items-center">
+        <span className="">Verification email has been sent to</span>
+        <span className="font-semibold text-gray-900">{email}</span>
       </p>
 
       {/* OTP Input Form */}

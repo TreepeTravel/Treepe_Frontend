@@ -9,10 +9,17 @@ import { loginApi } from "@/action/sign-in";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false); // To toggle password visibility
+  const [loading, setLoading] = useState(false); // Loading state for form submission
   const [signUpForm, setsignUpForm] = useState({
     email: "",
     password: "",
   }); // Form state for email and password
+
+  const [resMessage, setResMessage] = useState({
+    show: false,
+    message: "",
+  });
+
   const [error, setError] = useState(""); // State for error messages
 
   // Destructure global states and functions from GlobalContext
@@ -38,22 +45,39 @@ export default function SignIn() {
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
     setError(null); // Reset error state
+    setResMessage({ show: false, message: "" });
 
+    const { email, password } = signUpForm;
+
+    if (!email || !password) {
+      setResMessage({ show: true, message: "All fields are required." });
+      return;
+    }
+
+    setLoading(true); // Set loading state
     try {
       const response = await loginApi(signUpForm); // Send login request
+    
       if (response.success) {
-        // alert("Login successful!");
         setlogin(true); // Update login state
-        setisNavpopupOpen(false); // Show
-        router.push("/account"); // Navigate to secure account page
+        setisNavpopupOpen(false); // Hide login modal
+        router.push("/"); // Navigate to the secure account page
       } else {
-        setError(response.message || "Something went wrong."); // Display server error message
+        setResMessage({
+          show: true,
+          message: response.message || "Something went wrong.",
+        }); // Display server error message
       }
     } catch (err) {
-      setError("Unable to login. Please try again."); // Handle API request errors
+      setResMessage({
+        show: true,
+        message: "Unable to login. Please try again.",
+      }); // Handle API request errors
+      // console.error(err);
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
-
   // Handle input field changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -199,12 +223,24 @@ export default function SignIn() {
                 Forgot password
               </button>
             </div>
-            <button
-              type="submit"
-              className="w-full py-2 flex items-center justify-center font-semibold text-white bg-green-600 rounded-3xl hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300"
-            >
-              Sign in
-            </button>
+            <div>
+              {resMessage.show ? (
+                <h3 className="text-red-600 mb-2 text-center text-xs font-medium">
+                  {resMessage.message}
+                </h3>
+              ) : null}
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-2 flex items-center justify-center font-semibold text-white rounded-3xl ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300"
+                }`}
+              >
+                {loading ? "Signing in..." : "Sign in"}
+              </button>
+            </div>
             <div className="flex text-gray-700 gap-2 font-semibold justify-center items-center text-sm">
               Don't have an account?
               <button

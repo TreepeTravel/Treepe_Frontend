@@ -20,11 +20,22 @@ export default function SignUp({ onClose }) {
   });
 
   // Global context values for sign-up and pop-up states
-  const { isSignUp, setisSignUp } = useContext(GlobalContext);
-  const { login, setlogin, verifyPopup, setverifyPopup } =
-    useContext(GlobalContext);
+  const {
+    isSignUp,
+    setisSignUp,
+    login,
+    setlogin,
+    verifyPopup,
+    setverifyPopup,
+  } = useContext(GlobalContext);
 
   const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [resMessage, setResMessage] = useState({
+    show: false,
+    message: "",
+  });
 
   // State for form data
   const [signInForm, setsignInForm] = useState({
@@ -47,34 +58,44 @@ export default function SignUp({ onClose }) {
   // Evaluates password strength
   function getPasswordStrength(password) {
     if (password.length > 10 && /[A-Z]/.test(password) && /\d/.test(password)) {
-      return { strength: "Strong", color: "bg-green-500" };
+      return { strength: "Strong", color: "bg-green-500", block: 3 };
     } else if (password.length > 6) {
-      return { strength: "Medium", color: "bg-yellow-500" };
+      return { strength: "Medium", color: "bg-yellow-500", block: 2 };
     }
-    return { strength: "Weak", color: "bg-red-500" };
+    return { strength: "Weak", color: "bg-red-500", block: 1 };
   }
 
   // Handles the sign-up process
   async function handleSignUp(e) {
-    e.preventDefault(); // Prevents page reload on form submission
-    console.log(signInForm);
+    e.preventDefault(); // Prevent page reload on form submission
+    setIsLoading(true); // Show loading indicator
 
-    // Calls the sign-up API with form data
-    const res = await SignUpApi(signInForm);
-    console.log(res);
+    try {
+      // Call the sign-up API with form data
+      const res = await SignUpApi(signInForm);
 
-    // Handles the response from the API
-    if (res.success) {
-      console.log("Verify page'");
-      setverifyPopup(true); // Opens the OTP verification pop-up
-    }
+      if (res?.success) {
+        // If sign-up is successful, show OTP verification pop-up
+        setverifyPopup(true);
+      } else if (res?.message === "User already exists. Please login.") {
+        // Handle case where user already exists
+        setResMessage({ show: true, message: res.message });
 
-    // If user already exists, switch to the sign-in form
-    if (
-      res.message == "User already exists. Please login." &&
-      res.success == false
-    ) {
-      setisSignUp(false);
+        // Automatically switch to the sign-in page after a delay
+        setTimeout(() => {
+          setisSignUp(false);
+          setResMessage({ show: false, message: "" });
+        }, 3000);
+      } else {
+        // Handle other errors returned by the API
+        console.error("Unexpected response:", res);
+      }
+    } catch (error) {
+      // Handle network or unexpected errors
+      console.error("Sign-up failed:", error);
+    } finally {
+      // Ensure the loading state is reset regardless of success or failure
+      setIsLoading(false);
     }
   }
 
@@ -91,7 +112,7 @@ export default function SignUp({ onClose }) {
           <h2 className="text-center text-2xl capitalize font-bold text-gray-800">
             Sign Up for Free
           </h2>
-          <form className="space-y-6">
+          <form className="space-y-4" onSubmit={(e) => handleSignUp(e)}>
             {/* Name field */}
             <div>
               <label
@@ -181,24 +202,32 @@ export default function SignUp({ onClose }) {
               {/* Password strength indicator */}
               <div className="w-full mt-2">
                 <div className="flex space-x-1">
-                  <div
-                    className={`w-1/3 h-1 ${passwordStrength.color} rounded-full`}
-                  ></div>
+                  {/* Block 1 */}
                   <div
                     className={`w-1/3 h-1 ${
-                      password.length > 5
-                        ? passwordStrength.color
+                      passwordStrength.block >= 1
+                        ? "bg-green-500"
                         : "bg-gray-300"
                     } rounded-full`}
                   ></div>
+                  {/* Block 2 */}
                   <div
                     className={`w-1/3 h-1 ${
-                      password.length > 8
-                        ? passwordStrength.color
+                      passwordStrength.block >= 2
+                        ? "bg-green-500"
+                        : "bg-gray-300"
+                    } rounded-full`}
+                  ></div>
+                  {/* Block 3 */}
+                  <div
+                    className={`w-1/3 h-1 ${
+                      passwordStrength.block === 3
+                        ? "bg-green-500"
                         : "bg-gray-300"
                     } rounded-full`}
                   ></div>
                 </div>
+                {/* Password strength label */}
                 <h1 className="text-sm font-medium text-gray-500 mt-1">
                   Password strength: {passwordStrength.strength}
                 </h1>
@@ -252,14 +281,38 @@ export default function SignUp({ onClose }) {
               </div>
             </div>
 
-            {/* Submit button */}
-            <button
-              type="submit"
-              onClick={(e) => handleSignUp(e)}
-              className="w-full py-2 flex items-center justify-center font-semibold text-white bg-green-600 rounded-3xl hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300"
-            >
-              Sign Up
-            </button>
+            <div>
+              {resMessage.show ? (
+                <h3 className="text-red-600 mb-2 text-center text-xs font-medium  ">
+                  {resMessage.message}
+                </h3>
+              ) : null}
+
+              {/* Submit button */}
+              <button
+                type="submit"
+                // onClick={(e) => handleSignUp(e)}
+                className={`w-full py-2 flex gap-1 items-center justify-center font-semibold text-white  rounded-3xl   ${
+                  isLoading
+                    ? "bg-gray-400 cursor-not-allowed" // Style when loading
+                    : "bg-green-600 hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300"
+                }`}
+              >
+                {isLoading ? "SignUp..." : "Sign Up "}{" "}
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 21 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.1875 17.2246C10.1875 17.4732 10.0887 17.7117 9.91291 17.8875C9.7371 18.0633 9.49864 18.1621 9.25 18.1621H4.25C4.00136 18.1621 3.7629 18.0633 3.58709 17.8875C3.41127 17.7117 3.3125 17.4732 3.3125 17.2246V3.47461C3.3125 3.22597 3.41127 2.98751 3.58709 2.8117C3.7629 2.63588 4.00136 2.53711 4.25 2.53711H9.25C9.49864 2.53711 9.7371 2.63588 9.91291 2.8117C10.0887 2.98751 10.1875 3.22597 10.1875 3.47461C10.1875 3.72325 10.0887 3.96171 9.91291 4.13752C9.7371 4.31334 9.49864 4.41211 9.25 4.41211H5.1875V16.2871H9.25C9.49864 16.2871 9.7371 16.3859 9.91291 16.5617C10.0887 16.7375 10.1875 16.976 10.1875 17.2246ZM18.6633 9.68633L15.5383 6.56133C15.3622 6.38521 15.1233 6.28626 14.8742 6.28626C14.6251 6.28626 14.3863 6.38521 14.2102 6.56133C14.034 6.73745 13.9351 6.97632 13.9351 7.22539C13.9351 7.47446 14.034 7.71333 14.2102 7.88945L15.7344 9.41211H9.25C9.00136 9.41211 8.7629 9.51088 8.58709 9.6867C8.41127 9.86251 8.3125 10.101 8.3125 10.3496C8.3125 10.5982 8.41127 10.8367 8.58709 11.0125C8.7629 11.1883 9.00136 11.2871 9.25 11.2871H15.7344L14.2094 12.8113C14.0333 12.9874 13.9343 13.2263 13.9343 13.4754C13.9343 13.7245 14.0333 13.9633 14.2094 14.1395C14.3855 14.3156 14.6244 14.4145 14.8734 14.4145C15.1225 14.4145 15.3614 14.3156 15.5375 14.1395L18.6625 11.0145C18.7499 10.9274 18.8194 10.824 18.8667 10.71C18.9141 10.5961 18.9386 10.4739 18.9386 10.3506C18.9387 10.2272 18.9144 10.105 18.8672 9.99099C18.8199 9.87701 18.7506 9.77348 18.6633 9.68633Z"
+                    fill="white"
+                  />
+                </svg>
+              </button>
+            </div>
 
             {/* Switch to sign-in */}
             <div className="flex text-gray-700 gap-2 font-semibold justify-center items-center text-sm">
