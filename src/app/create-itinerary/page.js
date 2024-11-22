@@ -1,9 +1,5 @@
+import CreateNew from "@/components/createItinarary/CreateNew";
 
-export default function CreateItinerary(){
-
-    return (
-        <div>
-            create itinerary
-        </div>
-    )
+export default function CreateItinerary() {
+  return <CreateNew />;
 }

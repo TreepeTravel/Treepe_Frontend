@@ -52,7 +52,7 @@ export default function Card({ index, card }) {
               <p>{card.para1}</p>
               <p className="">{card.para2}</p>
             </div>
-          </div>
+          </div> 
           <div className="flex items-center justify-between">
             <button
               onClick={handleLikeClick}

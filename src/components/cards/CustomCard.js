@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Card from "./Card";
+import Card2 from "./Card2";
 
 const cards = [
   {
@@ -99,7 +100,7 @@ function CustomCard({ bigTitle, style, greenHeading }) {
               key={index}
               className="w-96 sm:w-96 md:w-1/3 lg:w-1/4 xl:w-[25%] flex-shrink-0"
             >
-              <Card card={card} index={index} />
+              <Card2 card={card} index={index} />
             </div>
           ))}
         </div>
