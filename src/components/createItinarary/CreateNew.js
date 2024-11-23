@@ -1,15 +1,84 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
+
 export default function CreateNew() {
+  const [isItinerary, setisItinerary] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const fileInputRef = useRef(null);
+  const [days, setDays] = useState([]);
+  const [currentIndex, setcurrentIndex] = useState(null);
+
+  const handleAddDay = () => {
+    setisItinerary(true);
+    const newDay = {
+      dayNumber: days.length + 1,
+      title: "",
+      itinerary: "",
+      media: [],
+      isEditing: { title: true, itinerary: true }, // Track edit mode for each field
+    };
+    setDays((prevDays) => [...prevDays, newDay]);
+  };
+
+  const handleDayChange = (index, field, value) => {
+    const updatedDays = [...days];
+    updatedDays[index][field] = value;
+    setDays(updatedDays);
+  };
+
+  // add useEffect to set the value
+  useEffect(() => {
+    setcurrentIndex(days.dayNumber);
+  }, [days.dayNumber]);
+
+  const handleKeyPress = (e, index, field) => {
+    if (e.key === "Enter") {
+      const updatedDays = [...days];
+      updatedDays[index].isEditing[field] = false; // Exit editing mode
+      setDays(updatedDays);
+    }
+  };
+
+  const handleEditField = (index, field) => {
+    const updatedDays = [...days];
+    updatedDays[index].isEditing[field] = true; // Enter editing mode
+    setDays(updatedDays);
+  };
+
+  const handleMediaUpload = (index, files) => {
+    const updatedDays = [...days];
+    updatedDays[index].media = [...updatedDays[index].media, ...files];
+    setDays(updatedDays);
+  };
+
+  const handleDeleteDay = (index) => {
+    setDays((prevDays) => prevDays.filter((_, i) => i !== index));
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    // Generate preview URLs for images
+    const filesWithPreview = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setSelectedFiles((prevFiles) => [...prevFiles, ...filesWithPreview]);
+  };
+
+  const handleAddMediaClick = (index) => {
+    document.getElementById(`media-input-${index}`).click();
+  };
+
   return (
     <div className="bg-gray-100  min-h-screen p-6">
-      <div className="max-w-8xl mx-auto px-10 bg-white shadow-md rounded-lg p-6">
+      <div className="max-w-8xl  mx-auto px-10 bg-white shadow-md rounded-lg p-6">
         {/* Header */}
-        <div className="flex flex-col w-full  items-center justify-center  ">
+        <div className="flex flex-col w-full   items-center justify-center  ">
           <h1 className="text-2xl text-gray-600 font-bold mb-5">
             Create itinerary
           </h1>
-          <div className=" border flex items-center justify-between border-gray-300 px- py-4 rounded-lg text-lg font-semibold focus:outline-none focus:ring focus:ring-green-400 w-full mb-6">
+          <div className=" border  flex items-center justify-between border-gray-300 px- py-4 rounded-lg text-lg font-semibold focus:outline-none focus:ring focus:ring-green-400 w-full mb-6">
             <div className="w-full items-center flex justify-start ">
               {" "}
               <input
@@ -115,9 +184,7 @@ export default function CreateNew() {
                 <h1 className="text-gray-800 font-bold text-2xl">
                   Itinerary Info
                 </h1>
-                <p
-                  className="text-[#565973] text-sm font-medium mt-1"
-                >
+                <p className="text-[#565973] text-sm font-medium mt-1">
                   Add a basic information to your Travel itinerary{" "}
                 </p>
               </div>
@@ -217,54 +284,258 @@ export default function CreateNew() {
           </div>
         </div>
 
-        {/* Itinerary Info */}
-
-        {/* Days */}
-        <div className="space-y-6">
-          {/* Day 1 */}
-          <div className="border-l-4 border-green-500 pl-4">
-            <h3 className="text-lg font-bold mb-2">Day 1</h3>
-            <textarea
-              placeholder="Write your travel itinerary here..."
-              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring focus:ring-green-400"
-              rows="3"
-            ></textarea>
+        {!isItinerary ? (
+          <div className="flex flex-col w-full items-center justify-center">
+            <h1 className="font-semibold text-gray-600 ">
+              Start creating your travel journey{" "}
+            </h1>
+            <img src="empty.png" alt="Empty Image" className="w-72" />
           </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Days */}
+            <div className="w-full">
+              {days.map((day, index) => (
+                <div
+                  key={index}
+                  className="relative  flex gap-1 w-full items-start"
+                >
+                  {/* Green Bar */}
+                  <span className="font-semibold text-xl mt-3  flex flex-col items-center justify-center text-gray-700 mb-2">
+                    Day{" "}
+                    <span className="text-2xl font-bold ">{day.dayNumber}</span>
+                  </span>
 
-          {/* Day 2 */}
-          <div className="border-l-4 border-green-500 pl-4">
-            <h3 className="text-lg font-bold mb-2">Day 2</h3>
-            <textarea
-              placeholder="Write your travel itinerary here..."
-              className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring focus:ring-green-400"
-              rows="3"
-            ></textarea>
-            <div className="mt-4">
-              <input
-                type="file"
-                className="file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded-lg file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
-              />
+                  {/* Day Content */}
+                  {/* Title Input */}
+                  <div className="flex w-full gap-2 ml-2">
+                    <div className="flex  ">
+                      <div className="bg-green-600 rounded-b-xl rounded-t-xl flex justify-center w-5 h-">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle cx="7" cy="7" r="7" fill="white" />
+                          <circle cx="7" cy="7" r="5" fill="#218B00" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1 w-full ml-6 mb-6  rounded-lg  p-6">
+                      <div className="bg-gray-100 rounded-xl border-gray-400 border-2 mb-4 p-3">
+                        {day.isEditing.title ? (
+                          <input
+                            type="text"
+                            placeholder="Add a Title to your Day"
+                            value={day.title}
+                            onChange={(e) =>
+                              handleDayChange(index, "title", e.target.value)
+                            }
+                            onKeyPress={(e) =>
+                              handleKeyPress(e, index, "title")
+                            }
+                            className="w-full text-xl font-semibold text-gray-700 bg-gray-100 rounded-md p-2 mb-4"
+                            autoFocus
+                          />
+                        ) : (
+                          <div
+                            className="w-full text-xl focus:outline-none font-semibold text-gray-700 mb-4 cursor-pointer"
+                            onClick={() => handleEditField(index, "title")}
+                          >
+                            {day.title || "Add a Title to your Day"}
+                          </div>
+                        )}
+
+                        {/* Itinerary Textarea */}
+                        {day.isEditing.itinerary ? (
+                          <textarea
+                            placeholder="Write your travel itinerary here..."
+                            value={day.itinerary}
+                            onChange={(e) =>
+                              handleDayChange(
+                                index,
+                                "itinerary",
+                                e.target.value
+                              )
+                            }
+                            onKeyPress={(e) =>
+                              handleKeyPress(e, index, "itinerary")
+                            }
+                            className="w-full text-gray-700 bg-gray-100 rounded-md p-2 "
+                            rows="4"
+                          ></textarea>
+                        ) : (
+                          <div
+                            className="w-full text-gray-700 bg-gray-100 rounded-md p-2 mb-4 cursor-pointer"
+                            onClick={() => handleEditField(index, "itinerary")}
+                          >
+                            {day.itinerary ||
+                              "Write your travel itinerary here..."}
+                          </div>
+                        )}
+                      </div>
+                      {/* Media Section */}
+                      <div>
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                          onClick={() => handleAddMediaClick(index)}
+                        >
+                          Add Media 
+                        </button>
+                        <input
+                          id={`media-input-${index}`}
+                          type="file"
+                          className="hidden"
+                          multiple
+                          accept="image/*"
+                          onChange={(e) =>
+                            handleMediaUpload(index, Array.from(e.target.files))
+                          }
+                        />
+                        <div className="flex flex-wrap mt-4">
+                          {day.media.map((file, i) => (
+                            <img
+                              key={i}
+                              src={URL.createObjectURL(file)}
+                              alt="Upload"
+                              className="w-20 h-20 object-cover rounded-lg mr-4 mb-4"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Delete Day Button */}
+                  <button
+                    onClick={() => handleDeleteDay(index)}
+                    className="ml-4 text-red-500 hover:text-red-600 transition"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.16992 14.8299L14.8299 9.16992"
+                        stroke="#292D32"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M14.8299 14.8299L9.16992 9.16992"
+                        stroke="#292D32"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+                        stroke="#292D32"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
             </div>
-          </div>
 
-          {/* Add more days */}
-          <div className="text-center">
-            <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
-              Add Day
-            </button>
+            {/* Day 2
+            <div className="border-l-4 border-green-500 pl-4">
+              <h3 className="text-lg font-bold mb-2">Day 2</h3>
+              <textarea
+                placeholder="Write your travel itinerary here..."
+                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring focus:ring-green-400"
+                rows="3"
+              ></textarea>
+              <div className="mt-4">
+                <input
+                  type="file"
+                  className="file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded-lg file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+                />
+              </div>
+            </div>
+
+            <div className="text-center">
+              <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
+                Add Day
+              </button>
+            </div> */}
           </div>
-        </div>
+        )}
 
         {/* Actions */}
-        <div className="mt-6 flex justify-end gap-4">
-          <button className="bg-gray-200 px-6 py-2 rounded-lg hover:bg-gray-300">
-            Save as Draft
+        <div className="mt-6 flex justify-center items-center  gap-4">
+          <button
+            className="bg-gray-200 flex gap-1 items-center justify-center text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-300"
+            onClick={handleAddMediaClick}
+          >
+            {" "}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+                stroke="#292D32"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z"
+                stroke="#292D32"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M2.66992 18.95L7.59992 15.64C8.38992 15.11 9.52992 15.17 10.2399 15.78L10.5699 16.07C11.3499 16.74 12.6099 16.74 13.3899 16.07L17.5499 12.5C18.3299 11.83 19.5899 11.83 20.3699 12.5L21.9999 13.9"
+                stroke="#292D32"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Add media
+            <input
+              // id={`media-input-${index}`}
+              type="file"
+              className="hidden"
+              multiple
+              accept="image/*"
+              // onChange={(e) =>
+              //   handleMediaUpload(index, Array.from(e.target.files))
+              // }
+            />
           </button>
-          <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
-            Preview
-          </button>
-          <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
-            Publish
+          <button
+            onClick={handleAddDay}
+            className="bg-gray-200 flex gap-1 items-center justify-center text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-300"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M19 11H13V5C13 4.73478 12.8946 4.48043 12.7071 4.29289C12.5196 4.10536 12.2652 4 12 4C11.7348 4 11.4804 4.10536 11.2929 4.29289C11.1054 4.48043 11 4.73478 11 5V11H5C4.73478 11 4.48043 11.1054 4.29289 11.2929C4.10536 11.4804 4 11.7348 4 12C4 12.2652 4.10536 12.5196 4.29289 12.7071C4.48043 12.8946 4.73478 13 5 13H11V19C11 19.2652 11.1054 19.5196 11.2929 19.7071C11.4804 19.8946 11.7348 20 12 20C12.2652 20 12.5196 19.8946 12.7071 19.7071C12.8946 19.5196 13 19.2652 13 19V13H19C19.2652 13 19.5196 12.8946 19.7071 12.7071C19.8946 12.5196 20 12.2652 20 12C20 11.7348 19.8946 11.4804 19.7071 11.2929C19.5196 11.1054 19.2652 11 19 11Z"
+                fill="black"
+              />
+            </svg>
+            Add Day
           </button>
         </div>
       </div>

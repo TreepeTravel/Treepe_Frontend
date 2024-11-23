@@ -197,7 +197,7 @@ export default function UserProfile() {
           </div>
         ) : (
           <div className="flex flex-col gap-16 w-full mb-10 mt-16 items-center justify-center">
-            <img src="/image.png" alt="draft Image" className="w-96" />
+            <img src="/emptyDraft.png" alt="draft Image" className="w-96" />
             <button
               onClick={() => router.push("/create-itinerary")}
               className="mr-4 rounded-full  flex gap-1 bg-green-600 px-4 py-2.5 text-sm font-semibold tracking-wider text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
