@@ -28,9 +28,7 @@ export default function RootLayout({ children }) {
       >
         <GlobalState>
           <Navbar />
-          <main className="flex  bg-gray-100 flex-col mt-16 ">
-            {children}
-          </main>
+          <main className="flex  bg-gray-100 flex-col mt-16 ">{children}</main>
           <Footer />
         </GlobalState>
       </body>

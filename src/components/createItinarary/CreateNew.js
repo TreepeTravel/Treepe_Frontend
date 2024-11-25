@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import DragDropImage from "../Image/Dragdrop";
 
 export default function CreateNew() {
   const [isItinerary, setisItinerary] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const fileInputRef = useRef(null);
   const [days, setDays] = useState([]);
-  const [currentIndex, setcurrentIndex] = useState(null);
+  const [currentIndex, setcurrentIndex] = useState(0);
 
   const handleAddDay = () => {
     setisItinerary(true);
@@ -29,8 +30,8 @@ export default function CreateNew() {
 
   // add useEffect to set the value
   useEffect(() => {
-    setcurrentIndex(days.dayNumber);
-  }, [days.dayNumber]);
+    setcurrentIndex(days.length);
+  }, [days]);
 
   const handleKeyPress = (e, index, field) => {
     if (e.key === "Enter") {
@@ -57,125 +58,155 @@ export default function CreateNew() {
   };
 
   const handleFileChange = (event) => {
+    // Ensure there is at least one day to add media
+    if (days.length === 0) {
+      console.error("No days available to add media.");
+      return;
+    }
+
+    // Default to the last added day if currentIndex is null or out of range
+    const index =
+      currentIndex !== null && currentIndex <= days.length
+        ? currentIndex - 1
+        : days.length - 1;
+
     const files = Array.from(event.target.files);
     // Generate preview URLs for images
     const filesWithPreview = files.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
-    setSelectedFiles((prevFiles) => [...prevFiles, ...filesWithPreview]);
+
+    // Update media for the calculated index
+    const updatedDays = [...days];
+    updatedDays[index].media = [
+      ...updatedDays[index].media,
+      ...filesWithPreview,
+    ];
+    setDays(updatedDays);
+
+    // Clear the file input after uploading (optional)
+    event.target.value = "";
   };
 
   const handleAddMediaClick = (index) => {
     document.getElementById(`media-input-${index}`).click();
   };
 
+  console.log(currentIndex);
+
   return (
     <div className="bg-gray-100  min-h-screen p-6">
       <div className="max-w-8xl  mx-auto px-10 bg-white shadow-md rounded-lg p-6">
-        {/* Header */}
+        {/* Header Title Part  */}
         <div className="flex flex-col w-full   items-center justify-center  ">
-          <h1 className="text-2xl text-gray-600 font-bold mb-5">
-            Create itinerary
-          </h1>
-          <div className=" border  flex items-center justify-between border-gray-300 px- py-4 rounded-lg text-lg font-semibold focus:outline-none focus:ring focus:ring-green-400 w-full mb-6">
-            <div className="w-full items-center flex justify-start ">
-              {" "}
-              <input
-                type="text"
-                placeholder="Add a Title to your Journey"
-                className="  max-w-[18rem] text-xl w-full text-gray-800 placeholder-gray-500  py-3 px-4 rounded-lg outline-none transition-shadow shadow-sm hover:shadow-md focus:ring-0"
-              />
-              <button className="p-2 hover:bg-gray-200 rounded-lg">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clipPath="url(#clip0_462_2971)">
-                    <path
-                      d="M3.5 24H18.5C19.4297 23.9974 20.3204 23.626 20.9765 22.9674C21.6327 22.3087 22.0008 21.4167 22 20.487V12.95C22 12.6848 21.8946 12.4304 21.7071 12.2429C21.5196 12.0554 21.2652 11.95 21 11.95C20.7348 11.95 20.4804 12.0554 20.2929 12.2429C20.1054 12.4304 20 12.6848 20 12.95V20.487C20.0013 20.8864 19.8441 21.2701 19.5629 21.5537C19.2817 21.8374 18.8994 21.9979 18.5 22H3.5C3.10057 21.9979 2.7183 21.8374 2.43708 21.5537C2.15587 21.2701 1.99867 20.8864 2 20.487V5.513C1.99867 5.11357 2.15587 4.72993 2.43708 4.44627C2.7183 4.16262 3.10057 4.00212 3.5 4H11C11.2652 4 11.5196 3.89464 11.7071 3.70711C11.8946 3.51957 12 3.26522 12 3C12 2.73478 11.8946 2.48043 11.7071 2.29289C11.5196 2.10536 11.2652 2 11 2H3.5C2.57031 2.00265 1.67964 2.37403 1.02346 3.03265C0.367281 3.69126 -0.000797091 4.5833 1.29611e-06 5.513V20.487C-0.000797091 21.4167 0.367281 22.3087 1.02346 22.9674C1.67964 23.626 2.57031 23.9974 3.5 24Z"
-                      fill="#404040"
-                    />
-                    <path
-                      d="M9.45547 10.5441L8.66647 14.1581C8.63076 14.322 8.63686 14.4923 8.68422 14.6532C8.73158 14.8142 8.81867 14.9606 8.93747 15.0791C9.05791 15.1946 9.20441 15.2793 9.36456 15.3261C9.52472 15.373 9.6938 15.3805 9.85747 15.3481L13.4635 14.5571C13.6507 14.516 13.8222 14.4219 13.9575 14.2861L23.0715 5.1721C23.3501 4.89351 23.5711 4.56277 23.7219 4.19876C23.8727 3.83475 23.9503 3.4446 23.9503 3.0506C23.9503 2.65659 23.8727 2.26644 23.7219 1.90243C23.5711 1.53842 23.3501 1.20768 23.0715 0.929096C22.5003 0.383232 21.7406 0.0786133 20.9505 0.0786133C20.1604 0.0786133 19.4007 0.383232 18.8295 0.929096L9.72947 10.0521C9.59289 10.1865 9.49779 10.3572 9.45547 10.5441ZM20.2435 2.3441C20.4337 2.16184 20.687 2.06009 20.9505 2.06009C21.2139 2.06009 21.4672 2.16184 21.6575 2.3441C21.8425 2.53272 21.9461 2.78639 21.9461 3.0506C21.9461 3.3148 21.8425 3.56847 21.6575 3.7571L20.9505 4.4641L19.5365 3.0501L20.2435 2.3441ZM11.3435 11.2581L18.1175 4.4671L19.5175 5.8741L12.7405 12.6671L10.9455 13.0611L11.3435 11.2581Z"
-                      fill="#404040"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_462_2971">
-                      <rect width="24" height="24" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-              </button>
-            </div>
-            <div className="flex w-1/2 items-center  gap-7">
-              <button className="font-bold flex gap-1 items-center justify-center border-green-600 border-2 rounded-md text-green-700 capitalize p-2 text-sm">
-                <svg
-                  width="25"
-                  height="25"
-                  viewBox="0 0 25 25"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M22.5 7.5C22.5 8.3885 22.1137 8.95068 21.5 9.5H3.42052C2.85309 8.96729 2.5 8.3495 2.5 7.5V6.5C2.5 4.84315 3.84315 3.5 5.5 3.5H19.5C21.1569 3.5 22.5 4.84315 22.5 6.5V7.5Z"
-                    fill="#218B00"
-                  />
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M3.5 11.5V18.5C3.5 20.1569 4.84315 21.5 6.5 21.5H18.5C20.1569 21.5 21.5 20.1569 21.5 18.5V11.5H3.5ZM8.5 14.5C8.5 13.9477 8.94772 13.5 9.5 13.5H15.5C16.0523 13.5 16.5 13.9477 16.5 14.5C16.5 15.0523 16.0523 15.5 15.5 15.5H9.5C8.94772 15.5 8.5 15.0523 8.5 14.5Z"
-                    fill="#218B00"
-                  />
-                </svg>
-                Save to draft
-              </button>
-              <button className="px-4 font-bold flex gap-2 items-center justify-center border-green-600 border-2 rounded-md text-green-700 capitalize p-2 text-sm">
-                <svg
-                  width="24"
-                  height="25"
-                  viewBox="0 0 24 25"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M23.8177 11.9261C23.6351 11.6652 19.409 5.45654 12.0003 5.45654C4.59162 5.45654 0.365532 11.6652 0.182923 11.9261C-0.0518597 12.2652 -0.0518597 12.7348 0.182923 13.1C0.365532 13.3348 4.59162 19.5435 12.0003 19.5435C19.409 19.5435 23.6351 13.3348 23.8177 13.0739C24.0525 12.7348 24.0525 12.2652 23.8177 11.9261ZM12.0003 17.4565C6.96553 17.4565 3.52205 13.9087 2.34814 12.5C3.52205 11.0652 6.93944 7.5435 12.0003 7.5435C17.0351 7.5435 20.4786 11.0913 21.6525 12.5C20.4525 13.9348 17.0351 17.4565 12.0003 17.4565ZM12.6003 8.22176C11.4525 8.06524 10.3307 8.35219 9.39162 9.05654C7.48727 10.4913 7.09597 13.2044 8.53075 15.1087C9.2351 16.0478 10.2264 16.6218 11.3742 16.8044C11.5829 16.8305 11.7916 16.8565 11.9742 16.8565C12.9134 16.8565 13.8003 16.5435 14.5568 15.9957C16.4612 14.5609 16.8525 11.8478 15.4177 9.9435C14.7655 8.97828 13.7481 8.37828 12.6003 8.22176ZM13.6438 14.7174C13.0699 15.1609 12.3394 15.3435 11.609 15.2392C10.8786 15.1348 10.2264 14.7435 9.78292 14.1696C8.89597 12.9435 9.13075 11.1957 10.3568 10.2826C10.9307 9.83915 11.6612 9.65654 12.3916 9.76089C13.1221 9.86524 13.7742 10.2565 14.2177 10.8305C15.1047 12.0565 14.8699 13.8044 13.6438 14.7174ZM13.5394 10.9348C13.7481 11.1174 13.8525 11.4044 13.8525 11.6652C13.8525 11.9261 13.7481 12.2131 13.5394 12.3957C13.3568 12.5783 13.0699 12.7087 12.809 12.7087C12.5221 12.7087 12.2612 12.6044 12.0786 12.3957C11.8699 12.187 11.7655 11.9261 11.7655 11.6652C11.7655 11.3783 11.8699 11.1174 12.0786 10.9348C12.2612 10.7261 12.5481 10.6218 12.809 10.6218C13.096 10.6478 13.3568 10.7522 13.5394 10.9348Z"
-                    fill="#218B00"
-                  />
-                </svg>
-                Preview
-              </button>
-              <button className=" px-6 font-bold flex gap-1 items-center justify-center bg-green-600 border-2 rounded-md text-white capitalize p-2 text-sm">
-                <svg
-                  width="25"
-                  height="25"
-                  viewBox="0 0 25 25"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g clipPath="url(#clip0_462_2966)">
-                    <path
-                      d="M5.5 4.5V6.5H19.5V4.5H5.5ZM5.5 14.5H9.5V20.5H15.5V14.5H19.5L12.5 7.5L5.5 14.5Z"
-                      fill="white"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_462_2966">
-                      <rect
-                        width="24"
-                        height="24"
-                        fill="white"
-                        transform="translate(0.5 0.5)"
+          <div className="flex flex-col w-full   items-center justify-center  ">
+            <h1 className="text-2xl  lg:text-gray-600 font-bold mb-5">
+              Create itinerary
+            </h1>
+
+            {/* Add a title Of Itinerary part */}
+            <div className=" border  flex items-center justify-between border-gray-300 px- py-4 rounded-lg text-lg font-semibold focus:outline-none focus:ring focus:ring-green-400 w-full mb-6">
+              <div className="w-full items-center flex justify-start ">
+                {/* Input to take the input as title */}
+                <input
+                  type="text"
+                  placeholder="Add a Title to your Journey"
+                  className="  max-w-[18rem] text-xl w-full text-gray-800 placeholder-gray-500  py-3 px-4 rounded-lg outline-none transition-shadow shadow-sm hover:shadow-md focus:ring-0"
+                />
+                {/* Button to edit the title */}
+                <button className="p-2 hover:bg-gray-200 rounded-lg">
+                  {/* Edit SVG */}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clipPath="url(#clip0_462_2971)">
+                      <path
+                        d="M3.5 24H18.5C19.4297 23.9974 20.3204 23.626 20.9765 22.9674C21.6327 22.3087 22.0008 21.4167 22 20.487V12.95C22 12.6848 21.8946 12.4304 21.7071 12.2429C21.5196 12.0554 21.2652 11.95 21 11.95C20.7348 11.95 20.4804 12.0554 20.2929 12.2429C20.1054 12.4304 20 12.6848 20 12.95V20.487C20.0013 20.8864 19.8441 21.2701 19.5629 21.5537C19.2817 21.8374 18.8994 21.9979 18.5 22H3.5C3.10057 21.9979 2.7183 21.8374 2.43708 21.5537C2.15587 21.2701 1.99867 20.8864 2 20.487V5.513C1.99867 5.11357 2.15587 4.72993 2.43708 4.44627C2.7183 4.16262 3.10057 4.00212 3.5 4H11C11.2652 4 11.5196 3.89464 11.7071 3.70711C11.8946 3.51957 12 3.26522 12 3C12 2.73478 11.8946 2.48043 11.7071 2.29289C11.5196 2.10536 11.2652 2 11 2H3.5C2.57031 2.00265 1.67964 2.37403 1.02346 3.03265C0.367281 3.69126 -0.000797091 4.5833 1.29611e-06 5.513V20.487C-0.000797091 21.4167 0.367281 22.3087 1.02346 22.9674C1.67964 23.626 2.57031 23.9974 3.5 24Z"
+                        fill="#404040"
                       />
-                    </clipPath>
-                  </defs>
-                </svg>
-                Publish
-              </button>
+                      <path
+                        d="M9.45547 10.5441L8.66647 14.1581C8.63076 14.322 8.63686 14.4923 8.68422 14.6532C8.73158 14.8142 8.81867 14.9606 8.93747 15.0791C9.05791 15.1946 9.20441 15.2793 9.36456 15.3261C9.52472 15.373 9.6938 15.3805 9.85747 15.3481L13.4635 14.5571C13.6507 14.516 13.8222 14.4219 13.9575 14.2861L23.0715 5.1721C23.3501 4.89351 23.5711 4.56277 23.7219 4.19876C23.8727 3.83475 23.9503 3.4446 23.9503 3.0506C23.9503 2.65659 23.8727 2.26644 23.7219 1.90243C23.5711 1.53842 23.3501 1.20768 23.0715 0.929096C22.5003 0.383232 21.7406 0.0786133 20.9505 0.0786133C20.1604 0.0786133 19.4007 0.383232 18.8295 0.929096L9.72947 10.0521C9.59289 10.1865 9.49779 10.3572 9.45547 10.5441ZM20.2435 2.3441C20.4337 2.16184 20.687 2.06009 20.9505 2.06009C21.2139 2.06009 21.4672 2.16184 21.6575 2.3441C21.8425 2.53272 21.9461 2.78639 21.9461 3.0506C21.9461 3.3148 21.8425 3.56847 21.6575 3.7571L20.9505 4.4641L19.5365 3.0501L20.2435 2.3441ZM11.3435 11.2581L18.1175 4.4671L19.5175 5.8741L12.7405 12.6671L10.9455 13.0611L11.3435 11.2581Z"
+                        fill="#404040"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_462_2971">
+                        <rect width="24" height="24" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </button>
+              </div>
+              <div className="flex w-1/2 items-center  gap-7">
+                <button className="font-bold flex gap-1 items-center justify-center border-[#409F22] border-2 rounded-md text-[#409F22] capitalize p-2 text-sm">
+                  <svg
+                    width="25"
+                    height="25"
+                    viewBox="0 0 25 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22.5 7.5C22.5 8.3885 22.1137 8.95068 21.5 9.5H3.42052C2.85309 8.96729 2.5 8.3495 2.5 7.5V6.5C2.5 4.84315 3.84315 3.5 5.5 3.5H19.5C21.1569 3.5 22.5 4.84315 22.5 6.5V7.5Z"
+                      fill="#218B00"
+                    />
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M3.5 11.5V18.5C3.5 20.1569 4.84315 21.5 6.5 21.5H18.5C20.1569 21.5 21.5 20.1569 21.5 18.5V11.5H3.5ZM8.5 14.5C8.5 13.9477 8.94772 13.5 9.5 13.5H15.5C16.0523 13.5 16.5 13.9477 16.5 14.5C16.5 15.0523 16.0523 15.5 15.5 15.5H9.5C8.94772 15.5 8.5 15.0523 8.5 14.5Z"
+                      fill="#218B00"
+                    />
+                  </svg>
+                  Save to draft
+                </button>
+                <button className="px-4 font-bold flex gap-2 items-center justify-center border-[#409F22] border-2 rounded-md text-[#409F22] capitalize p-2 text-sm">
+                  <svg
+                    width="24"
+                    height="25"
+                    viewBox="0 0 24 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M23.8177 11.9261C23.6351 11.6652 19.409 5.45654 12.0003 5.45654C4.59162 5.45654 0.365532 11.6652 0.182923 11.9261C-0.0518597 12.2652 -0.0518597 12.7348 0.182923 13.1C0.365532 13.3348 4.59162 19.5435 12.0003 19.5435C19.409 19.5435 23.6351 13.3348 23.8177 13.0739C24.0525 12.7348 24.0525 12.2652 23.8177 11.9261ZM12.0003 17.4565C6.96553 17.4565 3.52205 13.9087 2.34814 12.5C3.52205 11.0652 6.93944 7.5435 12.0003 7.5435C17.0351 7.5435 20.4786 11.0913 21.6525 12.5C20.4525 13.9348 17.0351 17.4565 12.0003 17.4565ZM12.6003 8.22176C11.4525 8.06524 10.3307 8.35219 9.39162 9.05654C7.48727 10.4913 7.09597 13.2044 8.53075 15.1087C9.2351 16.0478 10.2264 16.6218 11.3742 16.8044C11.5829 16.8305 11.7916 16.8565 11.9742 16.8565C12.9134 16.8565 13.8003 16.5435 14.5568 15.9957C16.4612 14.5609 16.8525 11.8478 15.4177 9.9435C14.7655 8.97828 13.7481 8.37828 12.6003 8.22176ZM13.6438 14.7174C13.0699 15.1609 12.3394 15.3435 11.609 15.2392C10.8786 15.1348 10.2264 14.7435 9.78292 14.1696C8.89597 12.9435 9.13075 11.1957 10.3568 10.2826C10.9307 9.83915 11.6612 9.65654 12.3916 9.76089C13.1221 9.86524 13.7742 10.2565 14.2177 10.8305C15.1047 12.0565 14.8699 13.8044 13.6438 14.7174ZM13.5394 10.9348C13.7481 11.1174 13.8525 11.4044 13.8525 11.6652C13.8525 11.9261 13.7481 12.2131 13.5394 12.3957C13.3568 12.5783 13.0699 12.7087 12.809 12.7087C12.5221 12.7087 12.2612 12.6044 12.0786 12.3957C11.8699 12.187 11.7655 11.9261 11.7655 11.6652C11.7655 11.3783 11.8699 11.1174 12.0786 10.9348C12.2612 10.7261 12.5481 10.6218 12.809 10.6218C13.096 10.6478 13.3568 10.7522 13.5394 10.9348Z"
+                      fill="#218B00"
+                    />
+                  </svg>
+                  Preview
+                </button>
+                <button className=" px-6 font-bold flex gap-1 items-center justify-center bg-[#409F22] border-2 rounded-md text-white capitalize p-2 text-sm">
+                  <svg
+                    width="25"
+                    height="25"
+                    viewBox="0 0 25 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clipPath="url(#clip0_462_2966)">
+                      <path
+                        d="M5.5 4.5V6.5H19.5V4.5H5.5ZM5.5 14.5H9.5V20.5H15.5V14.5H19.5L12.5 7.5L5.5 14.5Z"
+                        fill="white"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_462_2966">
+                        <rect
+                          width="24"
+                          height="24"
+                          fill="white"
+                          transform="translate(0.5 0.5)"
+                        />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  Publish
+                </button>
+              </div>
             </div>
           </div>
           <div className="flex w-full border border-gray-300 px-4 rounded-lg mb-10 py-4 items-center justify-between">
@@ -310,7 +341,7 @@ export default function CreateNew() {
                   {/* Title Input */}
                   <div className="flex w-full gap-2 ml-2">
                     <div className="flex  ">
-                      <div className="bg-green-600 rounded-b-xl rounded-t-xl flex justify-center w-5 h-">
+                      <div className="bg-[#409F22] rounded-b-xl rounded-t-xl flex justify-center w-5 h-">
                         <svg
                           width="14"
                           height="14"
@@ -324,158 +355,255 @@ export default function CreateNew() {
                       </div>
                     </div>
                     <div className="flex-1 w-full ml-6 mb-6  rounded-lg  p-6">
-                      <div className="bg-gray-100 rounded-xl border-gray-400 border-2 mb-4 p-3">
-                        {day.isEditing.title ? (
-                          <input
-                            type="text"
-                            placeholder="Add a Title to your Day"
-                            value={day.title}
-                            onChange={(e) =>
-                              handleDayChange(index, "title", e.target.value)
-                            }
-                            onKeyPress={(e) =>
-                              handleKeyPress(e, index, "title")
-                            }
-                            className="w-full text-xl font-semibold text-gray-700 bg-gray-100 rounded-md p-2 mb-4"
-                            autoFocus
-                          />
-                        ) : (
-                          <div
-                            className="w-full text-xl focus:outline-none font-semibold text-gray-700 mb-4 cursor-pointer"
-                            onClick={() => handleEditField(index, "title")}
-                          >
-                            {day.title || "Add a Title to your Day"}
-                          </div>
-                        )}
+                      <div className="bg-gray-100 rounded-xl flex justify-between items-start border-gray-400 border-2 mb-4 p-3">
+                        <div className="w-full focus:outline-none">
+                          {day.isEditing.title ? (
+                            <input
+                              type="text"
+                              placeholder="Add a Title to your Day"
+                              value={day.title}
+                              onChange={(e) =>
+                                handleDayChange(index, "title", e.target.value)
+                              }
+                              onKeyPress={(e) =>
+                                handleKeyPress(e, index, "title")
+                              }
+                              className="w-full text-xl focus:outline-none font-semibold text-gray-700 bg-gray-100 rounded-md p-2 mb-4"
+                              autoFocus
+                            />
+                          ) : (
+                            <div className="w-full flex gap-2 items-center p-2  text-xl focus:outline-none font-semibold text-gray-700 mb-4 cursor-pointer">
+                              {day.title || "Add a Title to your Day"}
+                              <button
+                                onClick={() => handleEditField(index, "title")}
+                              >
+                                <svg
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <g clipPath="url(#clip0_434_1567)">
+                                    <path
+                                      d="M3.5 24H18.5C19.4297 23.9974 20.3204 23.626 20.9765 22.9674C21.6327 22.3087 22.0008 21.4167 22 20.487V12.95C22 12.6848 21.8946 12.4304 21.7071 12.2429C21.5196 12.0554 21.2652 11.95 21 11.95C20.7348 11.95 20.4804 12.0554 20.2929 12.2429C20.1054 12.4304 20 12.6848 20 12.95V20.487C20.0013 20.8864 19.8441 21.2701 19.5629 21.5537C19.2817 21.8374 18.8994 21.9979 18.5 22H3.5C3.10057 21.9979 2.7183 21.8374 2.43708 21.5537C2.15587 21.2701 1.99867 20.8864 2 20.487V5.513C1.99867 5.11357 2.15587 4.72993 2.43708 4.44627C2.7183 4.16262 3.10057 4.00212 3.5 4H11C11.2652 4 11.5196 3.89464 11.7071 3.70711C11.8946 3.51957 12 3.26522 12 3C12 2.73478 11.8946 2.48043 11.7071 2.29289C11.5196 2.10536 11.2652 2 11 2H3.5C2.57031 2.00265 1.67964 2.37403 1.02346 3.03265C0.367281 3.69126 -0.000797091 4.5833 1.29611e-06 5.513V20.487C-0.000797091 21.4167 0.367281 22.3087 1.02346 22.9674C1.67964 23.626 2.57031 23.9974 3.5 24Z"
+                                      fill="#404040"
+                                    />
+                                    <path
+                                      d="M9.45645 10.5441L8.66745 14.1581C8.63174 14.322 8.63784 14.4923 8.6852 14.6532C8.73256 14.8142 8.81965 14.9606 8.93845 15.0791C9.05889 15.1946 9.20539 15.2793 9.36554 15.3261C9.52569 15.373 9.69477 15.3805 9.85845 15.3481L13.4645 14.5571C13.6517 14.516 13.8232 14.4219 13.9585 14.2861L23.0724 5.1721C23.3511 4.89351 23.5721 4.56277 23.7229 4.19876C23.8737 3.83475 23.9513 3.4446 23.9513 3.0506C23.9513 2.65659 23.8737 2.26644 23.7229 1.90243C23.5721 1.53842 23.3511 1.20768 23.0724 0.929096C22.5012 0.383232 21.7416 0.0786133 20.9515 0.0786133C20.1614 0.0786133 19.4017 0.383232 18.8305 0.929096L9.73045 10.0521C9.59387 10.1865 9.49877 10.3572 9.45645 10.5441ZM20.2445 2.3441C20.4347 2.16184 20.688 2.06009 20.9515 2.06009C21.2149 2.06009 21.4682 2.16184 21.6585 2.3441C21.8434 2.53272 21.9471 2.78639 21.9471 3.0506C21.9471 3.3148 21.8434 3.56847 21.6585 3.7571L20.9515 4.4641L19.5374 3.0501L20.2445 2.3441ZM11.3445 11.2581L18.1185 4.4671L19.5185 5.8741L12.7415 12.6671L10.9464 13.0611L11.3445 11.2581Z"
+                                      fill="#404040"
+                                    />
+                                  </g>
+                                  <defs>
+                                    <clipPath id="clip0_434_1567">
+                                      <rect
+                                        width="24"
+                                        height="24"
+                                        fill="white"
+                                      />
+                                    </clipPath>
+                                  </defs>
+                                </svg>
+                              </button>
+                            </div>
+                          )}
 
-                        {/* Itinerary Textarea */}
-                        {day.isEditing.itinerary ? (
-                          <textarea
-                            placeholder="Write your travel itinerary here..."
-                            value={day.itinerary}
+                          {/* Itinerary Textarea */}
+                          {day.isEditing.itinerary ? (
+                            <textarea
+                              placeholder="Write your travel itinerary here..."
+                              value={day.itinerary}
+                              onChange={(e) =>
+                                handleDayChange(
+                                  index,
+                                  "itinerary",
+                                  e.target.value
+                                )
+                              }
+                              onKeyPress={(e) =>
+                                handleKeyPress(e, index, "itinerary")
+                              }
+                              className="w-full focus:outline text-gray-700 bg-gray-100 rounded-md p-2 "
+                              rows="4"
+                            ></textarea>
+                          ) : (
+                            <div
+                              className="w-full text-gray-700 bg-gray-100 rounded-md p-2 mb-4 cursor-pointer"
+                              onClick={() =>
+                                handleEditField(index, "itinerary")
+                              }
+                            >
+                              {day.itinerary ||
+                                "Write your travel itinerary here..."}
+                            </div>
+                          )}
+                        </div>
+                        {/* Delete Day Button */}
+                        <button
+                          onClick={() => handleDeleteDay(index)}
+                          className="ml-4 text-red-500  hover:text-red-600 transition"
+                        >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M9.16992 14.8299L14.8299 9.16992"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M14.8299 14.8299L9.16992 9.16992"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+                              stroke="#292D32"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap mt-4">
+                        {day.media.map((file, i) => (
+                          <div
+                            key={`${index}-${i}`}
+                            className="relative  w-[225px] h-[145px] mr-4 mb-4"
+                          >
+                            <img
+                              src={file.preview || URL.createObjectURL(file)}
+                              alt="Upload"
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+
+                            <button
+                              onClick={() => handleRemoveImage(i)}
+                              className="absolute top-0 right-0 m-1"
+                            >
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9.17004 14.83L14.83 9.16998"
+                                  stroke="#292D32"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M14.83 14.83L9.17004 9.16998"
+                                  stroke="#292D32"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+                                  stroke="#292D32"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                        <div className="flex items-center justify-center">
+                          <button
+                            className="bg-gray-200 flex gap-1 items-center justify-center text-sm font-medium px-2 py-2 rounded-lg hover:bg-gray-300"
+                            onClick={() => {
+                              handleAddMediaClick(index);
+                            }}
+                          >
+                            {" "}
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+                                stroke="#292D32"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z"
+                                stroke="#292D32"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+
+                              <path
+                                d="M2.66992 18.95L7.59992 15.64C8.38992 15.11 9.52992 15.17 10.2399 15.78L10.5699 16.07C11.3499 16.74 12.6099 16.74 13.3899 16.07L17.5499 12.5C18.3299 11.83 19.5899 11.83 20.3699 12.5L21.9999 13.9"
+                                stroke="#292D32"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 25 25"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M19.1282 11.5H13.1282V5.5C13.1282 5.23478 13.0228 4.98043 12.8353 4.79289C12.6477 4.60536 12.3934 4.5 12.1282 4.5C11.863 4.5 11.6086 4.60536 11.4211 4.79289C11.2335 4.98043 11.1282 5.23478 11.1282 5.5V11.5H5.12817C4.86296 11.5 4.6086 11.6054 4.42107 11.7929C4.23353 11.9804 4.12817 12.2348 4.12817 12.5C4.12817 12.7652 4.23353 13.0196 4.42107 13.2071C4.6086 13.3946 4.86296 13.5 5.12817 13.5H11.1282V19.5C11.1282 19.7652 11.2335 20.0196 11.4211 20.2071C11.6086 20.3946 11.863 20.5 12.1282 20.5C12.3934 20.5 12.6477 20.3946 12.8353 20.2071C13.0228 20.0196 13.1282 19.7652 13.1282 19.5V13.5H19.1282C19.3934 13.5 19.6477 13.3946 19.8353 13.2071C20.0228 13.0196 20.1282 12.7652 20.1282 12.5C20.1282 12.2348 20.0228 11.9804 19.8353 11.7929C19.6477 11.6054 19.3934 11.5 19.1282 11.5Z"
+                                fill="black"
+                              />
+                            </svg>
+                          </button>
+                          <input
+                            id={`media-input-${index}`}
+                            type="file"
+                            className="hidden"
+                            multiple
+                            accept="image/*"
                             onChange={(e) =>
-                              handleDayChange(
+                              handleMediaUpload(
                                 index,
-                                "itinerary",
-                                e.target.value
+                                Array.from(e.target.files)
                               )
                             }
-                            onKeyPress={(e) =>
-                              handleKeyPress(e, index, "itinerary")
-                            }
-                            className="w-full text-gray-700 bg-gray-100 rounded-md p-2 "
-                            rows="4"
-                          ></textarea>
-                        ) : (
-                          <div
-                            className="w-full text-gray-700 bg-gray-100 rounded-md p-2 mb-4 cursor-pointer"
-                            onClick={() => handleEditField(index, "itinerary")}
-                          >
-                            {day.itinerary ||
-                              "Write your travel itinerary here..."}
-                          </div>
-                        )}
-                      </div>
-                      {/* Media Section */}
-                      <div>
-                        <button
-                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                          onClick={() => handleAddMediaClick(index)}
-                        >
-                          Add Media 
-                        </button>
-                        <input
-                          id={`media-input-${index}`}
-                          type="file"
-                          className="hidden"
-                          multiple
-                          accept="image/*"
-                          onChange={(e) =>
-                            handleMediaUpload(index, Array.from(e.target.files))
-                          }
-                        />
-                        <div className="flex flex-wrap mt-4">
-                          {day.media.map((file, i) => (
-                            <img
-                              key={i}
-                              src={URL.createObjectURL(file)}
-                              alt="Upload"
-                              className="w-20 h-20 object-cover rounded-lg mr-4 mb-4"
-                            />
-                          ))}
+                          />
                         </div>
+
+                        {/* Media Section */}
                       </div>
                     </div>
                   </div>
-
-                  {/* Delete Day Button */}
-                  <button
-                    onClick={() => handleDeleteDay(index)}
-                    className="ml-4 text-red-500 hover:text-red-600 transition"
-                  >
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9.16992 14.8299L14.8299 9.16992"
-                        stroke="#292D32"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M14.8299 14.8299L9.16992 9.16992"
-                        stroke="#292D32"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
-                        stroke="#292D32"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
                 </div>
               ))}
             </div>
-
-            {/* Day 2
-            <div className="border-l-4 border-green-500 pl-4">
-              <h3 className="text-lg font-bold mb-2">Day 2</h3>
-              <textarea
-                placeholder="Write your travel itinerary here..."
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring focus:ring-green-400"
-                rows="3"
-              ></textarea>
-              <div className="mt-4">
-                <input
-                  type="file"
-                  className="file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded-lg file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
-                />
-              </div>
-            </div>
-
-            <div className="text-center">
-              <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
-                Add Day
-              </button>
-            </div> */}
           </div>
         )}
 
         {/* Actions */}
         <div className="mt-6 flex justify-center items-center  gap-4">
           <button
-            className="bg-gray-200 flex gap-1 items-center justify-center text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-300"
-            onClick={handleAddMediaClick}
+            className="bg-gray-200 flex gap-1 items-center justify-center text-sm disabled:opacity-50 disabled:cursor-not-allowed font-medium px-4 py-2 rounded-lg hover:bg-gray-300"
+            disabled={days.length === 0}
+            onClick={() => fileInputRef.current.click()}
           >
             {" "}
             <svg
@@ -507,16 +635,15 @@ export default function CreateNew() {
                 strokeLinejoin="round"
               />
             </svg>
-            Add media
+            Add Media
             <input
-              // id={`media-input-${index}`}
+              ref={fileInputRef}
               type="file"
               className="hidden"
               multiple
               accept="image/*"
-              // onChange={(e) =>
-              //   handleMediaUpload(index, Array.from(e.target.files))
-              // }
+              onChange={handleFileChange}
+              disabled={currentIndex === null || currentIndex > days.length}
             />
           </button>
           <button

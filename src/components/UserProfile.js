@@ -5,6 +5,7 @@ import Card from "./cards/Card";
 import { GlobalContext } from "@/context";
 import { useSearchParams } from "next/navigation";
 import EditPopUp from "./popups/EditPopup";
+import Card2 from "./cards/Card2";
 
 export default function UserProfile() {
   const cards = [
@@ -192,7 +193,7 @@ export default function UserProfile() {
         {filteredCards.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {filteredCards.map((card, index) => (
-              <Card key={index} index={index} card={card} />
+              <Card2 key={index} index={index} card={card} />
             ))}
           </div>
         ) : (
